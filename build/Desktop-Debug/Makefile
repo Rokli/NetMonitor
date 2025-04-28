@@ -52,9 +52,13 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../../main.cpp \
+SOURCES       = ../../Models/agent.cpp \
+		../../Models/server.cpp \
+		../../main.cpp \
 		../../mainwindow.cpp moc_mainwindow.cpp
-OBJECTS       = main.o \
+OBJECTS       = agent.o \
+		server.o \
+		main.o \
 		mainwindow.o \
 		moc_mainwindow.o
 DIST          = /usr/lib64/qt6/mkspecs/features/spec_pre.prf \
@@ -117,6 +121,7 @@ DIST          = /usr/lib64/qt6/mkspecs/features/spec_pre.prf \
 		/usr/lib64/qt6/mkspecs/features/qt_config.prf \
 		/usr/lib64/qt6/mkspecs/linux-g++/qmake.conf \
 		/usr/lib64/qt6/mkspecs/features/spec_post.prf \
+		../../.qmake.stash \
 		/usr/lib64/qt6/mkspecs/features/exclusive_builds.prf \
 		/usr/lib64/qt6/mkspecs/features/toolchain.prf \
 		/usr/lib64/qt6/mkspecs/features/default_pre.prf \
@@ -138,7 +143,11 @@ DIST          = /usr/lib64/qt6/mkspecs/features/spec_pre.prf \
 		/usr/lib64/qt6/mkspecs/features/exceptions.prf \
 		/usr/lib64/qt6/mkspecs/features/yacc.prf \
 		/usr/lib64/qt6/mkspecs/features/lex.prf \
-		../../../../rgzSysAdmin3.pro ../../mainwindow.h ../../main.cpp \
+		../../../../rgzSysAdmin3.pro ../../Models/agent.h \
+		../../Models/server.h \
+		../../mainwindow.h ../../Models/agent.cpp \
+		../../Models/server.cpp \
+		../../main.cpp \
 		../../mainwindow.cpp
 QMAKE_TARGET  = rgzSysAdmin3
 DESTDIR       = 
@@ -211,6 +220,7 @@ Makefile: ../../rgzSysAdmin3.pro /usr/lib64/qt6/mkspecs/linux-g++/qmake.conf /us
 		/usr/lib64/qt6/mkspecs/features/qt_config.prf \
 		/usr/lib64/qt6/mkspecs/linux-g++/qmake.conf \
 		/usr/lib64/qt6/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/usr/lib64/qt6/mkspecs/features/exclusive_builds.prf \
 		/usr/lib64/qt6/mkspecs/features/toolchain.prf \
 		/usr/lib64/qt6/mkspecs/features/default_pre.prf \
@@ -297,6 +307,7 @@ Makefile: ../../rgzSysAdmin3.pro /usr/lib64/qt6/mkspecs/linux-g++/qmake.conf /us
 /usr/lib64/qt6/mkspecs/features/qt_config.prf:
 /usr/lib64/qt6/mkspecs/linux-g++/qmake.conf:
 /usr/lib64/qt6/mkspecs/features/spec_post.prf:
+.qmake.stash:
 /usr/lib64/qt6/mkspecs/features/exclusive_builds.prf:
 /usr/lib64/qt6/mkspecs/features/toolchain.prf:
 /usr/lib64/qt6/mkspecs/features/default_pre.prf:
@@ -337,8 +348,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib64/qt6/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../mainwindow.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../../main.cpp ../../mainwindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../../Models/agent.h ../../Models/server.h ../../mainwindow.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../../Models/agent.cpp ../../Models/server.cpp ../../main.cpp ../../mainwindow.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../../mainwindow.ui $(DISTDIR)/
 
 
@@ -399,6 +410,12 @@ compiler_lex_clean:
 compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_uic_clean 
 
 ####### Compile
+
+agent.o: ../../Models/agent.cpp ../../Models/agent.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o agent.o ../../Models/agent.cpp
+
+server.o: ../../Models/server.cpp ../../Models/server.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o server.o ../../Models/server.cpp
 
 main.o: ../../main.cpp ../../mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../../main.cpp

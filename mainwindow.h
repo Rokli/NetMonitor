@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <Models/agent.h>
+#include <Models/server.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
