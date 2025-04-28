@@ -15,7 +15,7 @@ void Agent::connectToServer()
     clientSocket_ = socket(AF_INET, SOCK_STREAM, 0);
     if (clientSocket_ == -1)
     {
-        qWarning() << "Сокет не получилось создать\n";
+        SendConsoleText("Сокет не получилось создать\n");
         return;
     }
 
@@ -25,28 +25,30 @@ void Agent::connectToServer()
 
     if (inet_pton(AF_INET, serverIp_.c_str(), &serverAddr.sin_addr) <= 0)
     {
-        qWarning() << "Неправильный айпи\n";
+        SendConsoleText("Неправильный айпи\n");
         return;
     }
 
     if (connect(clientSocket_, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) < 0)
     {
-        qWarning() << "Не получилось подключиться к серверу.\n";
+        SendConsoleText("Не получилось подключиться к серверу.\n");
         return;
     }
 
-    std::cout << "Подключился к серверу:" << serverIp_ << ":" << serverPort_ << "\n";
+    SendConsoleText("Подключился к серверу: " + QString::fromStdString(serverIp_) + ":" + QString::number(serverPort_) + "\n");
 }
 
 void Agent::sendData(const std::string& data)
 {
     if (clientSocket_ == -1)
     {
-        qWarning() << "Нет активный подключений.\n";
+        SendConsoleText("Нет активных подключений.\n");
         return;
     }
 
-    send(clientSocket_, data.c_str(), data.size(), 0);
+    std::string toSend = data + "\n";
+    send(clientSocket_, toSend.c_str(), toSend.size(), 0);
+    SendConsoleText("Сообщение отправлено: " + QString::fromStdString(data));
 }
 
 void Agent::disconnect()
@@ -56,4 +58,14 @@ void Agent::disconnect()
         close(clientSocket_);
         clientSocket_ = -1;
     }
+}
+
+void Agent::setConsole(QTextEdit *console)
+{
+    console_ = console;
+}
+
+void Agent::SendConsoleText(QString text)
+{
+    console_->append(text);
 }

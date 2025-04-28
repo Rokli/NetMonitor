@@ -9,11 +9,38 @@ Server::Server(int port)
 
 void Server::start()
 {
-    serverSocket_ = socket(AF_INET, SOCK_STREAM, 0);
+    dbConnection_ = mysql_init(nullptr);
 
+    if (!dbConnection_)
+    {
+        sendTextConsole("MySQL initialization failed.");
+        return;
+    }
+
+    const char* host = "localhost";
+    const char* user = "root";
+    const char* password = "xrxc321";
+    const char* database = "rgz";
+
+    if (!mysql_real_connect(dbConnection_, host, user, password, database, 0, nullptr, 0))
+    {
+        sendTextConsole(QString("MySQL connection failed: ") + mysql_error(dbConnection_));
+        return;
+    }
+
+    sendTextConsole("Connected to MySQL database successfully.");
+
+    serverSocket_ = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket_ == -1)
     {
-        qWarning() << "Failed to create socket.\n";
+        sendTextConsole("Ошибка в создании сокета.\n");
+        return;
+    }
+
+    int opt = 1;
+    if (setsockopt(serverSocket_, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+    {
+        sendTextConsole("setsockopt failed\n");
         return;
     }
 
@@ -24,18 +51,18 @@ void Server::start()
 
     if (bind(serverSocket_, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) < 0)
     {
-        qWarning() << "Bind failed.\n";
+        sendTextConsole("Ошибка при настройке: " + QString::fromStdString(strerror(errno)) + "\n");
         return;
     }
 
     if (listen(serverSocket_, 5) < 0)
     {
-        qWarning() << "Listen failed.\n";
+        sendTextConsole("Не может слушать.\n");
         return;
     }
 
     running_ = true;
-    qWarning() << "Server started on port " << port_ << ". Waiting for connections...\n";
+    sendTextConsole("Сервер начал работу на порту: " + QString::number(port_) + ".\n Ждём клиентов...\n");
 
     std::thread serverThread(&Server::run, this);
     serverThread.detach();
@@ -52,7 +79,11 @@ void Server::stop()
             if (thread.joinable())
                 thread.join();
         }
-        qWarning() << "Server stopped.\n";
+        if (dbConnection_)
+        {
+            mysql_close(dbConnection_);
+        }
+        sendTextConsole("Сервер остановился.\n");
     }
 }
 
@@ -67,7 +98,7 @@ void Server::run()
         if (clientSocket < 0)
         {
             if (running_)
-                qWarning() << "Accept failed.\n";
+                sendTextConsole("Ошибка при принятии.\n");
             continue;
         }
 
@@ -86,8 +117,32 @@ void Server::handleClient(int clientSocket)
         if (bytesRead <= 0)
             break;
 
-        std::string message(buffer);
-        qWarning() << "Received: " << message << "\n";
+        std::string message(buffer, bytesRead);
+        sendTextConsole("Сообщение: " + QString::fromStdString(message) + "\n");
+
+        char escapedMessage[2048];
+        mysql_real_escape_string(dbConnection_, escapedMessage, message.c_str(), message.length());
+
+        std::string query = "INSERT INTO agent_data (message) VALUES ('" + std::string(escapedMessage) + "')";
+
+        if (mysql_query(dbConnection_, query.c_str()))
+        {
+            sendTextConsole(QString("Failed to insert data into MySQL database: ") + mysql_error(dbConnection_));
+        }
+        else
+        {
+            sendTextConsole("Data inserted successfully.");
+        }
     }
     close(clientSocket);
+}
+
+void Server::setConsoleEdit(QTextEdit *console)
+{
+    console_ = console;
+}
+
+void Server::sendTextConsole(QString text)
+{
+    console_->append(text);
 }

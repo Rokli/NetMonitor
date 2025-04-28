@@ -18,8 +18,24 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+private slots:
+    void on_buttonStart_clicked();
+
+    void on_buttonStop_clicked();
+
+    void on_buttonWrite_clicked();
+
+    void on_buttonSendClient_clicked();
+
+    void on_buttonDisconnect_clicked();
+
+    void on_buttonSettingClient_clicked();
+
+    void on_buttonConnect_clicked();
 
 private:
+    Server *server_;
+    Agent *agent_;
     Ui::MainWindow *ui;
 };
 #endif // MAINWINDOW_H
