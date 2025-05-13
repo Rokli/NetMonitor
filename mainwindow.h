@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <Models/agent.h>
 #include <Models/server.h>
+#include <QVector>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -33,9 +34,14 @@ private slots:
 
     void on_buttonConnect_clicked();
 
+    void on_menuClient_clicked();
+
+    void on_menuServer_clicked();
 private:
     Server *server_;
     Agent *agent_;
     Ui::MainWindow *ui;
+    QVector<Agent*> agents_;
+    QMap<QWidget*, Agent*> tabToAgent_;
 };
 #endif // MAINWINDOW_H

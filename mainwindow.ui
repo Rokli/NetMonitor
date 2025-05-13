@@ -133,7 +133,31 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <height>23</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuClient">
+    <property name="title">
+     <string>Клиент</string>
+    </property>
+    <addaction name="createClient"/>
+   </widget>
+   <widget class="QMenu" name="menuServer">
+    <property name="title">
+     <string>Сервер</string>
+    </property>
+    <addaction name="settingsServer"/>
+   </widget>
+   <addaction name="menuClient"/>
+   <addaction name="menuServer"/>
   </widget>
+  <action name="createClient">
+   <property name="text">
+    <string>Создать клиента</string>
+   </property>
+  </action>
+  <action name="settingsServer">
+   <property name="text">
+    <string>Настроить сервер</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

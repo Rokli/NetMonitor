@@ -10,9 +10,11 @@
 #define UI_MAINWINDOW_H
 
 #include <QtCore/QVariant>
+#include <QtGui/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QPushButton>
@@ -27,6 +29,8 @@ QT_BEGIN_NAMESPACE
 class Ui_MainWindow
 {
 public:
+    QAction *createClient;
+    QAction *settingsServer;
     QWidget *centralwidget;
     QHBoxLayout *horizontalLayout;
     QTabWidget *tabWidget;
@@ -47,12 +51,18 @@ public:
     QPushButton *buttonDisconnect;
     QPushButton *buttonSettingClient;
     QMenuBar *menubar;
+    QMenu *menuClient;
+    QMenu *menuServer;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName("MainWindow");
         MainWindow->resize(800, 600);
+        createClient = new QAction(MainWindow);
+        createClient->setObjectName("createClient");
+        settingsServer = new QAction(MainWindow);
+        settingsServer->setObjectName("settingsServer");
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName("centralwidget");
         horizontalLayout = new QHBoxLayout(centralwidget);
@@ -128,7 +138,16 @@ public:
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
         menubar->setGeometry(QRect(0, 0, 800, 23));
+        menuClient = new QMenu(menubar);
+        menuClient->setObjectName("menuClient");
+        menuServer = new QMenu(menubar);
+        menuServer->setObjectName("menuServer");
         MainWindow->setMenuBar(menubar);
+
+        menubar->addAction(menuClient->menuAction());
+        menubar->addAction(menuServer->menuAction());
+        menuClient->addAction(createClient);
+        menuServer->addAction(settingsServer);
 
         retranslateUi(MainWindow);
 
@@ -141,6 +160,8 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "NetMonitor", nullptr));
+        createClient->setText(QCoreApplication::translate("MainWindow", "\320\241\320\276\320\267\320\264\320\260\321\202\321\214 \320\272\320\273\320\270\320\265\320\275\321\202\320\260", nullptr));
+        settingsServer->setText(QCoreApplication::translate("MainWindow", "\320\235\320\260\321\201\321\202\321\200\320\276\320\270\321\202\321\214 \321\201\320\265\321\200\320\262\320\265\321\200", nullptr));
         consoleServer->setHtml(QCoreApplication::translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -158,6 +179,8 @@ public:
         buttonDisconnect->setText(QCoreApplication::translate("MainWindow", "\320\236\321\202\320\272\320\273\321\216\321\207\320\270\321\202\321\214\321\201\321\217", nullptr));
         buttonSettingClient->setText(QCoreApplication::translate("MainWindow", "\320\235\320\260\321\201\321\202\321\200\320\276\320\271\320\272\320\260 \320\272\320\273\320\270\320\265\320\275\321\202\320\260", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabClient), QCoreApplication::translate("MainWindow", "\320\232\320\273\320\270\320\265\320\275\321\202", nullptr));
+        menuClient->setTitle(QCoreApplication::translate("MainWindow", "\320\232\320\273\320\270\320\265\320\275\321\202", nullptr));
+        menuServer->setTitle(QCoreApplication::translate("MainWindow", "\320\241\320\265\321\200\320\262\320\265\321\200", nullptr));
     } // retranslateUi
 
 };

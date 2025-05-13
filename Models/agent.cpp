@@ -47,9 +47,19 @@ void Agent::sendData(const std::string& data)
     }
 
     std::string toSend = data + "\n";
-    send(clientSocket_, toSend.c_str(), toSend.size(), 0);
+    ssize_t sent = send(clientSocket_, toSend.c_str(), toSend.size(), 0);
+
+    if (sent == -1)
+    {
+        SendConsoleText("Ошибка отправки. Соединение разорвано сервером.");
+        close(clientSocket_);
+        clientSocket_ = -1;
+        return;
+    }
+
     SendConsoleText("Сообщение отправлено: " + QString::fromStdString(data));
 }
+
 
 void Agent::disconnect()
 {
@@ -57,6 +67,7 @@ void Agent::disconnect()
     {
         close(clientSocket_);
         clientSocket_ = -1;
+        SendConsoleText("Отключён от сервера");
     }
 }
 

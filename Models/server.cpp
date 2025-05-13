@@ -70,20 +70,36 @@ void Server::start()
 
 void Server::stop()
 {
-    if (running_)
+    if (!running_)
+        return;
+
+    running_ = false;
+
+    if (serverSocket_ != -1)
     {
-        running_ = false;
+        shutdown(serverSocket_, SHUT_RDWR);
         close(serverSocket_);
-        for (auto& thread : clientThreads_)
-        {
-            if (thread.joinable())
-                thread.join();
-        }
-        if (dbConnection_)
-        {
-            mysql_close(dbConnection_);
-        }
-        sendTextConsole("Сервер остановился.\n");
+        serverSocket_ = -1;
+    }
+
+    for (auto& thread : clientThreads_)
+    {
+        if (thread.joinable())
+            thread.join();
+    }
+    clientThreads_.clear();
+
+    if (dbConnection_)
+    {
+        mysql_close(dbConnection_);
+        dbConnection_ = nullptr;
+    }
+
+    if (console_)
+    {
+        QMetaObject::invokeMethod(console_, [this]() {
+            sendTextConsole("Сервер остановился.\n");
+        }, Qt::QueuedConnection);
     }
 }
 
@@ -118,7 +134,7 @@ void Server::handleClient(int clientSocket)
             break;
 
         std::string message(buffer, bytesRead);
-        sendTextConsole("Сообщение: " + QString::fromStdString(message) + "\n");
+        sendTextConsole("Сообщение: " + QString::fromStdString(message));
 
         char escapedMessage[2048];
         mysql_real_escape_string(dbConnection_, escapedMessage, message.c_str(), message.length());
@@ -127,15 +143,18 @@ void Server::handleClient(int clientSocket)
 
         if (mysql_query(dbConnection_, query.c_str()))
         {
-            sendTextConsole(QString("Failed to insert data into MySQL database: ") + mysql_error(dbConnection_));
+            sendTextConsole(QString("Ошибка вставки в БД: ") + mysql_error(dbConnection_));
         }
         else
         {
-            sendTextConsole("Data inserted successfully.");
+            sendTextConsole("Данные добавлены в БД.");
         }
     }
+
     close(clientSocket);
+    sendTextConsole("Клиент отключён.");
 }
+
 
 void Server::setConsoleEdit(QTextEdit *console)
 {
