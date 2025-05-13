@@ -6,6 +6,7 @@
 #include <Models/server.h>
 #include <QVector>
 #include <QMessageBox>
+#include <QTableView>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

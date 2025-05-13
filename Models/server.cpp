@@ -170,3 +170,43 @@ void Server::sendTextConsole(QString text)
             console_->append(text);
         }, Qt::QueuedConnection);
 }
+
+QStandardItemModel* Server::fetchLatestMessages()
+{
+    QStandardItemModel* model = new QStandardItemModel();
+
+    if (!dbConnection_)
+        return model;
+
+    const char* query = "SELECT id, message, received_at FROM agent_data ORDER BY received_at DESC LIMIT 50";
+
+    if (mysql_query(dbConnection_, query))
+    {
+        sendTextConsole(QString("Ошибка SQL-запроса: ") + mysql_error(dbConnection_));
+        return model;
+    }
+
+    MYSQL_RES* result = mysql_store_result(dbConnection_);
+    if (!result)
+        return model;
+
+    QStringList headers = { "ID", "Сообщение", "Получено" };
+    model->setHorizontalHeaderLabels(headers);
+
+    MYSQL_ROW row;
+    int rowIndex = 0;
+    while ((row = mysql_fetch_row(result)))
+    {
+        QStandardItem* idItem = new QStandardItem(row[0] ? row[0] : "");
+        QStandardItem* msgItem = new QStandardItem(row[1] ? row[1] : "");
+        QStandardItem* timeItem = new QStandardItem(row[2] ? row[2] : "");
+
+        model->setItem(rowIndex, 0, idItem);
+        model->setItem(rowIndex, 1, msgItem);
+        model->setItem(rowIndex, 2, timeItem);
+        ++rowIndex;
+    }
+
+    mysql_free_result(result);
+    return model;
+}

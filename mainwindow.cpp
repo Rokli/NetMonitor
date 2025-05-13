@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "dialogclient.h"
+#include <QHeaderView>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -31,7 +32,29 @@ void MainWindow::on_buttonStop_clicked()
 
 void MainWindow::on_buttonWrite_clicked()
 {
+    if (!server_) {
+        QMessageBox::warning(this, "Ошибка", "Сервер не запущен.");
+        return;
+    }
 
+    QStandardItemModel* model = server_->fetchLatestMessages();
+    if (!model || model->rowCount() == 0) {
+        QMessageBox::information(this, "Информация", "Нет данных для отображения.");
+        return;
+    }
+
+    QDialog* dialog = new QDialog(this);
+    dialog->setWindowTitle("Данные из базы");
+    dialog->resize(600, 400);
+
+    QVBoxLayout* layout = new QVBoxLayout(dialog);
+    QTableView* table = new QTableView(dialog);
+    table->setModel(model);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->horizontalHeader()->setStretchLastSection(true);
+    layout->addWidget(table);
+    dialog->setLayout(layout);
+    dialog->exec();
 }
 
 

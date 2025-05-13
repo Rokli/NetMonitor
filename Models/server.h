@@ -9,6 +9,7 @@
 #include <netinet/in.h>
 #include <QObject>
 #include <QTextEdit>
+#include <QStandardItemModel>
 
 class Server
 {
@@ -17,6 +18,7 @@ public:
     void start();
     void stop();
     void setConsoleEdit(QTextEdit *console);
+    QStandardItemModel* fetchLatestMessages();
 private:
     void run();
     void handleClient(int clientSocket);
