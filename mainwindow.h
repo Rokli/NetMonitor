@@ -5,6 +5,7 @@
 #include <Models/agent.h>
 #include <Models/server.h>
 #include <QVector>
+#include <QMessageBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -26,13 +27,9 @@ private slots:
 
     void on_buttonWrite_clicked();
 
-    void on_buttonSendClient_clicked();
-
     void on_buttonDisconnect_clicked();
 
     void on_buttonSettingClient_clicked();
-
-    void on_buttonConnect_clicked();
 
     void on_menuClient_clicked();
 

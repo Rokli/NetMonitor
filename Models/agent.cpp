@@ -80,3 +80,24 @@ void Agent::SendConsoleText(QString text)
 {
     console_->append(text);
 }
+
+std::string Agent::getServerIp()
+{
+    return serverIp_;
+}
+
+int Agent::getServerPort()
+{
+    return serverPort_;
+}
+
+
+void Agent::setServerIp(std::string serverIp)
+{
+    this->serverIp_ = serverIp;
+}
+
+void Agent::setServerPort(int serverPort)
+{
+    this->serverPort_ = serverPort;
+}

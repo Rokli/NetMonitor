@@ -26,10 +26,10 @@ public:
     QVBoxLayout *verticalLayout;
     QHBoxLayout *horizontalLayout_2;
     QLabel *label;
-    QLineEdit *lineEdit;
+    QLineEdit *ipclient;
     QHBoxLayout *horizontalLayout;
     QLabel *label_2;
-    QLineEdit *lineEdit_2;
+    QLineEdit *portclient;
     QPushButton *pushButton;
 
     void setupUi(QDialog *DialogClient)
@@ -50,11 +50,11 @@ public:
 
         horizontalLayout_2->addWidget(label);
 
-        lineEdit = new QLineEdit(DialogClient);
-        lineEdit->setObjectName("lineEdit");
-        lineEdit->setMaximumSize(QSize(200, 30));
+        ipclient = new QLineEdit(DialogClient);
+        ipclient->setObjectName("ipclient");
+        ipclient->setMaximumSize(QSize(200, 30));
 
-        horizontalLayout_2->addWidget(lineEdit);
+        horizontalLayout_2->addWidget(ipclient);
 
 
         verticalLayout->addLayout(horizontalLayout_2);
@@ -67,12 +67,12 @@ public:
 
         horizontalLayout->addWidget(label_2);
 
-        lineEdit_2 = new QLineEdit(DialogClient);
-        lineEdit_2->setObjectName("lineEdit_2");
-        lineEdit_2->setMinimumSize(QSize(200, 30));
-        lineEdit_2->setMaximumSize(QSize(200, 30));
+        portclient = new QLineEdit(DialogClient);
+        portclient->setObjectName("portclient");
+        portclient->setMinimumSize(QSize(200, 30));
+        portclient->setMaximumSize(QSize(200, 30));
 
-        horizontalLayout->addWidget(lineEdit_2);
+        horizontalLayout->addWidget(portclient);
 
 
         verticalLayout->addLayout(horizontalLayout);

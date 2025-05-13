@@ -14,7 +14,6 @@ SOURCES += \
     Models/agent.cpp \
     Models/server.cpp \
     dialogclient.cpp \
-    dialogserver.cpp \
     main.cpp \
     mainwindow.cpp
 
@@ -22,12 +21,10 @@ HEADERS += \
     Models/agent.h \
     Models/server.h \
     dialogclient.h \
-    dialogserver.h \
     mainwindow.h
 
 FORMS += \
     dialogclient.ui \
-    dialogserver.ui \
     mainwindow.ui
 
 # Default rules for deployment.

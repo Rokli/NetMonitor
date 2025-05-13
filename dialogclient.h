@@ -2,6 +2,7 @@
 #define DIALOGCLIENT_H
 
 #include <QDialog>
+#include <QString>
 
 namespace Ui {
 class DialogClient;
@@ -13,6 +14,10 @@ class DialogClient : public QDialog
 
 public:
     explicit DialogClient(QWidget *parent = nullptr);
+    void setIpClient(QString text);
+    void setPortclient(QString text);
+    std::string getServerIp();
+    int getServerPort();
     ~DialogClient();
 
 private slots:

@@ -15,7 +15,10 @@ public:
     void sendData(const std::string& data);
     void disconnect();
     void setConsole(QTextEdit *console);
-
+    std::string getServerIp();
+    int getServerPort();
+    void setServerIp(std::string serverIp);
+    void setServerPort(int serverPort);
 private:
     int clientSocket_;
     std::string serverIp_;

@@ -34,17 +34,6 @@ void MainWindow::on_buttonWrite_clicked()
 
 }
 
-void MainWindow::on_buttonSendClient_clicked()
-{
-    QWidget* currentTab = ui->tabWidget->currentWidget();
-    if (tabToAgent_.contains(currentTab)) {
-        Agent* agent = tabToAgent_[currentTab];
-        agent->sendData(ui->textEditInsert->toPlainText().toStdString());
-        ui->textEditInsert->clear();
-    } else {
-        qWarning() << "Агент не найден для текущей вкладки";
-    }
-}
 
 
 
@@ -56,17 +45,27 @@ void MainWindow::on_buttonDisconnect_clicked()
 
 void MainWindow::on_buttonSettingClient_clicked()
 {
-    DialogClient *dialog = new DialogClient();
-    dialog->show();
+    QWidget* currentTab = ui->tabWidget->currentWidget();
+
+    if (!tabToAgent_.contains(currentTab)) {
+        QMessageBox::warning(this, "Ошибка", "Клиент не найден для текущей вкладки.");
+        return;
+    }
+
+    Agent* agent = tabToAgent_[currentTab];
+    if (!agent) {
+        QMessageBox::warning(this, "Ошибка", "Указатель на агента null.");
+        return;
+    }
+
+    DialogClient *dialog = new DialogClient(this);
+    dialog->setIpClient(QString::fromStdString(agent->getServerIp()));
+    dialog->setPortclient(QString::number(agent->getServerPort()));
+    dialog->exec();
+    agent->setServerIp(dialog->getServerIp());
+    agent->setServerPort(dialog->getServerPort());
 }
 
-
-void MainWindow::on_buttonConnect_clicked()
-{
-    agent_ = new Agent("127.0.0.1", 1234);
-    agent_->setConsole(ui->consoleClient);
-    agent_->connectToServer();
-}
 
 void MainWindow::on_menuClient_clicked()
 {
@@ -112,8 +111,7 @@ void MainWindow::on_menuClient_clicked()
     });
 
     connect(settingsButton, &QPushButton::clicked, this, [=]() {
-        DialogClient* dialog = new DialogClient();
-        dialog->show();
+        on_buttonSettingClient_clicked();
     });
 
     ui->tabWidget->addTab(newTab, "Клиент " + QString::number(agents_.size()));

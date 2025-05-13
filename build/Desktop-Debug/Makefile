@@ -55,19 +55,15 @@ OBJECTS_DIR   = ./
 SOURCES       = ../../Models/agent.cpp \
 		../../Models/server.cpp \
 		../../dialogclient.cpp \
-		../../dialogserver.cpp \
 		../../main.cpp \
 		../../mainwindow.cpp moc_dialogclient.cpp \
-		moc_dialogserver.cpp \
 		moc_mainwindow.cpp
 OBJECTS       = agent.o \
 		server.o \
 		dialogclient.o \
-		dialogserver.o \
 		main.o \
 		mainwindow.o \
 		moc_dialogclient.o \
-		moc_dialogserver.o \
 		moc_mainwindow.o
 DIST          = /usr/lib64/qt6/mkspecs/features/spec_pre.prf \
 		/usr/lib64/qt6/mkspecs/common/unix.conf \
@@ -154,11 +150,9 @@ DIST          = /usr/lib64/qt6/mkspecs/features/spec_pre.prf \
 		../../../../rgzSysAdmin3.pro ../../Models/agent.h \
 		../../Models/server.h \
 		../../dialogclient.h \
-		../../dialogserver.h \
 		../../mainwindow.h ../../Models/agent.cpp \
 		../../Models/server.cpp \
 		../../dialogclient.cpp \
-		../../dialogserver.cpp \
 		../../main.cpp \
 		../../mainwindow.cpp
 QMAKE_TARGET  = rgzSysAdmin3
@@ -169,7 +163,7 @@ TARGET        = rgzSysAdmin3
 first: all
 ####### Build rules
 
-rgzSysAdmin3: ui_dialogclient.h ui_dialogserver.h ui_mainwindow.h $(OBJECTS)  
+rgzSysAdmin3: ui_dialogclient.h ui_mainwindow.h $(OBJECTS)  
 	$(LINK) $(LFLAGS) -o $(TARGET)  $(OBJECTS) $(OBJCOMP) $(LIBS)
 
 Makefile: ../../rgzSysAdmin3.pro /usr/lib64/qt6/mkspecs/linux-g++/qmake.conf /usr/lib64/qt6/mkspecs/features/spec_pre.prf \
@@ -360,9 +354,9 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib64/qt6/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../Models/agent.h ../../Models/server.h ../../dialogclient.h ../../dialogserver.h ../../mainwindow.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../../Models/agent.cpp ../../Models/server.cpp ../../dialogclient.cpp ../../dialogserver.cpp ../../main.cpp ../../mainwindow.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../dialogclient.ui ../../dialogserver.ui ../../mainwindow.ui $(DISTDIR)/
+	$(COPY_FILE) --parents ../../Models/agent.h ../../Models/server.h ../../dialogclient.h ../../mainwindow.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../../Models/agent.cpp ../../Models/server.cpp ../../dialogclient.cpp ../../main.cpp ../../mainwindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../../dialogclient.ui ../../mainwindow.ui $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -394,18 +388,13 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib64/qt6/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -std=gnu++1z -Wall -Wextra -dM -E -o moc_predefs.h /usr/lib64/qt6/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_dialogclient.cpp moc_dialogserver.cpp moc_mainwindow.cpp
+compiler_moc_header_make_all: moc_dialogclient.cpp moc_mainwindow.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_dialogclient.cpp moc_dialogserver.cpp moc_mainwindow.cpp
+	-$(DEL_FILE) moc_dialogclient.cpp moc_mainwindow.cpp
 moc_dialogclient.cpp: ../../dialogclient.h \
 		moc_predefs.h \
 		/usr/lib64/qt6/libexec/moc
 	/usr/lib64/qt6/libexec/moc $(DEFINES) --include /home/hikiray/rgzSysAdmin3/build/Desktop-Debug/moc_predefs.h -I/usr/lib64/qt6/mkspecs/linux-g++ -I/home/hikiray/rgzSysAdmin3 -I/usr/include/mysql -I/usr/include/qt6 -I/usr/include/qt6/QtWidgets -I/usr/include/qt6/QtGui -I/usr/include/qt6/QtCore -I. -I/usr/include/c++/14 -I/usr/include/c++/14/x86_64-redhat-linux -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-redhat-linux/14/include -I/usr/local/include -I/usr/include ../../dialogclient.h -o moc_dialogclient.cpp
-
-moc_dialogserver.cpp: ../../dialogserver.h \
-		moc_predefs.h \
-		/usr/lib64/qt6/libexec/moc
-	/usr/lib64/qt6/libexec/moc $(DEFINES) --include /home/hikiray/rgzSysAdmin3/build/Desktop-Debug/moc_predefs.h -I/usr/lib64/qt6/mkspecs/linux-g++ -I/home/hikiray/rgzSysAdmin3 -I/usr/include/mysql -I/usr/include/qt6 -I/usr/include/qt6/QtWidgets -I/usr/include/qt6/QtGui -I/usr/include/qt6/QtCore -I. -I/usr/include/c++/14 -I/usr/include/c++/14/x86_64-redhat-linux -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-redhat-linux/14/include -I/usr/local/include -I/usr/include ../../dialogserver.h -o moc_dialogserver.cpp
 
 moc_mainwindow.cpp: ../../mainwindow.h \
 		../../Models/agent.h \
@@ -418,16 +407,12 @@ compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
-compiler_uic_make_all: ui_dialogclient.h ui_dialogserver.h ui_mainwindow.h
+compiler_uic_make_all: ui_dialogclient.h ui_mainwindow.h
 compiler_uic_clean:
-	-$(DEL_FILE) ui_dialogclient.h ui_dialogserver.h ui_mainwindow.h
+	-$(DEL_FILE) ui_dialogclient.h ui_mainwindow.h
 ui_dialogclient.h: ../../dialogclient.ui \
 		/usr/lib64/qt6/libexec/uic
 	/usr/lib64/qt6/libexec/uic ../../dialogclient.ui -o ui_dialogclient.h
-
-ui_dialogserver.h: ../../dialogserver.ui \
-		/usr/lib64/qt6/libexec/uic
-	/usr/lib64/qt6/libexec/uic ../../dialogserver.ui -o ui_dialogserver.h
 
 ui_mainwindow.h: ../../mainwindow.ui \
 		/usr/lib64/qt6/libexec/uic
@@ -453,10 +438,6 @@ dialogclient.o: ../../dialogclient.cpp ../../dialogclient.h \
 		ui_dialogclient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o dialogclient.o ../../dialogclient.cpp
 
-dialogserver.o: ../../dialogserver.cpp ../../dialogserver.h \
-		ui_dialogserver.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o dialogserver.o ../../dialogserver.cpp
-
 main.o: ../../main.cpp ../../mainwindow.h \
 		../../Models/agent.h \
 		../../Models/server.h
@@ -471,9 +452,6 @@ mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
 
 moc_dialogclient.o: moc_dialogclient.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_dialogclient.o moc_dialogclient.cpp
-
-moc_dialogserver.o: moc_dialogserver.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_dialogserver.o moc_dialogserver.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp

@@ -17,8 +17,11 @@
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QTabWidget" name="tabWidget">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabServer">
        <attribute name="title">
@@ -69,57 +72,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tabClient">
-       <attribute name="title">
-        <string>Клиент</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <widget class="QTextEdit" name="consoleClient">
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPlainTextEdit" name="textEditInsert">
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>30</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSplitter" name="splitter_2">
-          <property name="orientation">
-           <enum>Qt::Orientation::Horizontal</enum>
-          </property>
-          <widget class="QPushButton" name="buttonSendClient">
-           <property name="text">
-            <string>Отправить</string>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="buttonConnect">
-           <property name="text">
-            <string>Подключиться</string>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="buttonDisconnect">
-           <property name="text">
-            <string>Отключиться</string>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="buttonSettingClient">
-           <property name="text">
-            <string>Настройка клиента</string>
-           </property>
-          </widget>
-         </widget>
-        </item>
-       </layout>
-      </widget>
      </widget>
     </item>
    </layout>
@@ -139,14 +91,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </property>
     <addaction name="createClient"/>
    </widget>
-   <widget class="QMenu" name="menuServer">
-    <property name="title">
-     <string>Сервер</string>
-    </property>
-    <addaction name="settingsServer"/>
-   </widget>
    <addaction name="menuClient"/>
-   <addaction name="menuServer"/>
   </widget>
   <action name="createClient">
    <property name="text">

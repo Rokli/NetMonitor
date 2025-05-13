@@ -2,10 +2,12 @@
 #include <iostream>
 #include <unistd.h>
 #include <cstring>
+#include <errno.h>
 
 Server::Server(int port)
-    : port_(port), serverSocket_(-1), running_(false) {}
-
+    : port_(port), serverSocket_(-1), running_(false), dbConnection_(nullptr), console_(nullptr)
+{
+}
 
 void Server::start()
 {
@@ -13,7 +15,7 @@ void Server::start()
 
     if (!dbConnection_)
     {
-        sendTextConsole("MySQL initialization failed.");
+        sendTextConsole("MySQL инициализация не удалась.");
         return;
     }
 
@@ -24,25 +26,21 @@ void Server::start()
 
     if (!mysql_real_connect(dbConnection_, host, user, password, database, 0, nullptr, 0))
     {
-        sendTextConsole(QString("MySQL connection failed: ") + mysql_error(dbConnection_));
+        sendTextConsole(QString("MySQL подключение не удалось: ") + mysql_error(dbConnection_));
         return;
     }
 
-    sendTextConsole("Connected to MySQL database successfully.");
+    sendTextConsole("Успешное подключение к базе данных MySQL.");
 
     serverSocket_ = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket_ == -1)
     {
-        sendTextConsole("Ошибка в создании сокета.\n");
+        sendTextConsole("Ошибка создания сокета.");
         return;
     }
 
     int opt = 1;
-    if (setsockopt(serverSocket_, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
-    {
-        sendTextConsole("setsockopt failed\n");
-        return;
-    }
+    setsockopt(serverSocket_, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
     sockaddr_in serverAddr{};
     serverAddr.sin_family = AF_INET;
@@ -51,18 +49,18 @@ void Server::start()
 
     if (bind(serverSocket_, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) < 0)
     {
-        sendTextConsole("Ошибка при настройке: " + QString::fromStdString(strerror(errno)) + "\n");
+        sendTextConsole("Ошибка при привязке: " + QString::fromStdString(strerror(errno)));
         return;
     }
 
     if (listen(serverSocket_, 5) < 0)
     {
-        sendTextConsole("Не может слушать.\n");
+        sendTextConsole("Ошибка при прослушивании.");
         return;
     }
 
     running_ = true;
-    sendTextConsole("Сервер начал работу на порту: " + QString::number(port_) + ".\n Ждём клиентов...\n");
+    sendTextConsole("Сервер запущен на порту: " + QString::number(port_) + ". Ожидаем клиентов...");
 
     std::thread serverThread(&Server::run, this);
     serverThread.detach();
@@ -98,7 +96,7 @@ void Server::stop()
     if (console_)
     {
         QMetaObject::invokeMethod(console_, [this]() {
-            sendTextConsole("Сервер остановился.\n");
+            sendTextConsole("Сервер остановлен.");
         }, Qt::QueuedConnection);
     }
 }
@@ -114,7 +112,7 @@ void Server::run()
         if (clientSocket < 0)
         {
             if (running_)
-                sendTextConsole("Ошибка при принятии.\n");
+                sendTextConsole("Ошибка accept: " + QString::fromStdString(strerror(errno)));
             continue;
         }
 
@@ -124,14 +122,23 @@ void Server::run()
 
 void Server::handleClient(int clientSocket)
 {
+    struct timeval timeout;
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+    setsockopt(clientSocket, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout));
+
     char buffer[1024];
-    while (true)
+    while (running_)
     {
         memset(buffer, 0, sizeof(buffer));
         ssize_t bytesRead = read(clientSocket, buffer, sizeof(buffer) - 1);
 
         if (bytesRead <= 0)
+        {
+            if (errno == EWOULDBLOCK || errno == EAGAIN)
+                continue;
             break;
+        }
 
         std::string message(buffer, bytesRead);
         sendTextConsole("Сообщение: " + QString::fromStdString(message));
@@ -142,19 +149,14 @@ void Server::handleClient(int clientSocket)
         std::string query = "INSERT INTO agent_data (message) VALUES ('" + std::string(escapedMessage) + "')";
 
         if (mysql_query(dbConnection_, query.c_str()))
-        {
-            sendTextConsole(QString("Ошибка вставки в БД: ") + mysql_error(dbConnection_));
-        }
+            sendTextConsole("Ошибка записи в БД: " + QString::fromStdString(mysql_error(dbConnection_)));
         else
-        {
-            sendTextConsole("Данные добавлены в БД.");
-        }
+            sendTextConsole("Данные добавлены в базу.");
     }
 
     close(clientSocket);
     sendTextConsole("Клиент отключён.");
 }
-
 
 void Server::setConsoleEdit(QTextEdit *console)
 {
@@ -163,5 +165,8 @@ void Server::setConsoleEdit(QTextEdit *console)
 
 void Server::sendTextConsole(QString text)
 {
-    console_->append(text);
+    if (console_)
+        QMetaObject::invokeMethod(console_, [this, text]() {
+            console_->append(text);
+        }, Qt::QueuedConnection);
 }

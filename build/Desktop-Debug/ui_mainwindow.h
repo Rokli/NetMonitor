@@ -16,7 +16,6 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
-#include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSplitter>
 #include <QtWidgets/QTabWidget>
@@ -41,18 +40,8 @@ public:
     QPushButton *buttonStart;
     QPushButton *buttonStop;
     QPushButton *buttonWrite;
-    QWidget *tabClient;
-    QVBoxLayout *verticalLayout_2;
-    QTextEdit *consoleClient;
-    QPlainTextEdit *textEditInsert;
-    QSplitter *splitter_2;
-    QPushButton *buttonSendClient;
-    QPushButton *buttonConnect;
-    QPushButton *buttonDisconnect;
-    QPushButton *buttonSettingClient;
     QMenuBar *menubar;
     QMenu *menuClient;
-    QMenu *menuServer;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -69,6 +58,7 @@ public:
         horizontalLayout->setObjectName("horizontalLayout");
         tabWidget = new QTabWidget(centralwidget);
         tabWidget->setObjectName("tabWidget");
+        tabWidget->setEnabled(true);
         tabServer = new QWidget();
         tabServer->setObjectName("tabServer");
         verticalLayout = new QVBoxLayout(tabServer);
@@ -96,41 +86,6 @@ public:
         verticalLayout->addWidget(splitter);
 
         tabWidget->addTab(tabServer, QString());
-        tabClient = new QWidget();
-        tabClient->setObjectName("tabClient");
-        verticalLayout_2 = new QVBoxLayout(tabClient);
-        verticalLayout_2->setObjectName("verticalLayout_2");
-        consoleClient = new QTextEdit(tabClient);
-        consoleClient->setObjectName("consoleClient");
-        consoleClient->setReadOnly(true);
-
-        verticalLayout_2->addWidget(consoleClient);
-
-        textEditInsert = new QPlainTextEdit(tabClient);
-        textEditInsert->setObjectName("textEditInsert");
-        textEditInsert->setMaximumSize(QSize(16777215, 30));
-
-        verticalLayout_2->addWidget(textEditInsert);
-
-        splitter_2 = new QSplitter(tabClient);
-        splitter_2->setObjectName("splitter_2");
-        splitter_2->setOrientation(Qt::Orientation::Horizontal);
-        buttonSendClient = new QPushButton(splitter_2);
-        buttonSendClient->setObjectName("buttonSendClient");
-        splitter_2->addWidget(buttonSendClient);
-        buttonConnect = new QPushButton(splitter_2);
-        buttonConnect->setObjectName("buttonConnect");
-        splitter_2->addWidget(buttonConnect);
-        buttonDisconnect = new QPushButton(splitter_2);
-        buttonDisconnect->setObjectName("buttonDisconnect");
-        splitter_2->addWidget(buttonDisconnect);
-        buttonSettingClient = new QPushButton(splitter_2);
-        buttonSettingClient->setObjectName("buttonSettingClient");
-        splitter_2->addWidget(buttonSettingClient);
-
-        verticalLayout_2->addWidget(splitter_2);
-
-        tabWidget->addTab(tabClient, QString());
 
         horizontalLayout->addWidget(tabWidget);
 
@@ -140,18 +95,14 @@ public:
         menubar->setGeometry(QRect(0, 0, 800, 23));
         menuClient = new QMenu(menubar);
         menuClient->setObjectName("menuClient");
-        menuServer = new QMenu(menubar);
-        menuServer->setObjectName("menuServer");
         MainWindow->setMenuBar(menubar);
 
         menubar->addAction(menuClient->menuAction());
-        menubar->addAction(menuServer->menuAction());
         menuClient->addAction(createClient);
-        menuServer->addAction(settingsServer);
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -174,13 +125,7 @@ public:
         buttonStop->setText(QCoreApplication::translate("MainWindow", "\320\236\321\201\321\202\320\260\320\275\320\276\320\262\320\270\321\202\321\214 \321\201\320\265\321\200\320\262\320\265\321\200", nullptr));
         buttonWrite->setText(QCoreApplication::translate("MainWindow", "\320\236\321\202\321\207\321\221\321\202 \321\201\320\265\321\200\320\262\320\265\321\200\320\260", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabServer), QCoreApplication::translate("MainWindow", "\320\241\320\265\321\200\320\262\320\265\321\200", nullptr));
-        buttonSendClient->setText(QCoreApplication::translate("MainWindow", "\320\236\321\202\320\277\321\200\320\260\320\262\320\270\321\202\321\214", nullptr));
-        buttonConnect->setText(QCoreApplication::translate("MainWindow", "\320\237\320\276\320\264\320\272\320\273\321\216\321\207\320\270\321\202\321\214\321\201\321\217", nullptr));
-        buttonDisconnect->setText(QCoreApplication::translate("MainWindow", "\320\236\321\202\320\272\320\273\321\216\321\207\320\270\321\202\321\214\321\201\321\217", nullptr));
-        buttonSettingClient->setText(QCoreApplication::translate("MainWindow", "\320\235\320\260\321\201\321\202\321\200\320\276\320\271\320\272\320\260 \320\272\320\273\320\270\320\265\320\275\321\202\320\260", nullptr));
-        tabWidget->setTabText(tabWidget->indexOf(tabClient), QCoreApplication::translate("MainWindow", "\320\232\320\273\320\270\320\265\320\275\321\202", nullptr));
         menuClient->setTitle(QCoreApplication::translate("MainWindow", "\320\232\320\273\320\270\320\265\320\275\321\202", nullptr));
-        menuServer->setTitle(QCoreApplication::translate("MainWindow", "\320\241\320\265\321\200\320\262\320\265\321\200", nullptr));
     } // retranslateUi
 
 };
